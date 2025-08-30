@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.swasi.composeuikit"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 24
@@ -35,7 +35,8 @@ android {
 }
 
 dependencies {
-
+    implementation("androidx.core:core:1.17.0")
+    implementation("androidx.core:core-ktx:1.17.0")
     implementation(platform("androidx.compose:compose-bom:2025.08.01"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
