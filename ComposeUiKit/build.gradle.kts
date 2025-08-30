@@ -2,6 +2,7 @@ plugins {
     id("com.android.library") version "8.9.3"
     id("org.jetbrains.kotlin.android") version "2.1.0"
     id("org.jetbrains.kotlin.plugin.compose") version "2.1.0"
+    id("maven-publish")
 }
 
 android {
@@ -56,4 +57,17 @@ dependencies {
 
     // LiveData observation
     implementation("androidx.compose.runtime:runtime-livedata")
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            create<MavenPublication>("release") {
+                from(components["release"])
+                groupId = "com.swasi"
+                artifactId = "composeuikit"
+                version = "1.0.0"
+            }
+        }
+    }
 }
