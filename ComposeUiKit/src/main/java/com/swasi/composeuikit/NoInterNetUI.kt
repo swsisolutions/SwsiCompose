@@ -29,7 +29,6 @@ import com.swasi.composeuikit.theme.dp_10
 import com.swasi.composeuikit.theme.dp_50
 import com.swasi.composeuikit.theme.dp_80
 import com.swasi.composeuikit.theme.sp_14
-import com.swasi.composeuikit.R
 
 @Composable
 fun NetworkErrorDialog(

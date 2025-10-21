@@ -27,8 +27,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -41,6 +44,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.swasi.composeuikit.theme.Colors
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun AppButton(
@@ -467,7 +472,7 @@ fun CheckboxText(
 @Preview
 @Composable
 fun CheckboxTextPreview() {
-    var checked = remember { mutableStateOf(false) }
+    val checked = remember { mutableStateOf(false) }
     CheckboxText(
         text = "Checkbox Text",
         checked = checked.value,
@@ -560,7 +565,7 @@ fun RadioButtons(
 @Preview
 @Composable
 fun RadioButtonsPreview() {
-    var currentOption = remember { mutableStateOf("Option 1") }
+    val currentOption = remember { mutableStateOf("Option 1") }
     RadioButtons(
         options = listOf("Option 1", "Option 2", "Option 3"),
         currentOption = currentOption.value,
@@ -570,24 +575,42 @@ fun RadioButtonsPreview() {
 
 @Composable
 fun ProgressButton(
-    text: String,
+    modifier: Modifier = Modifier,
+    buttonText: String,
+    buttonColor: Color = Colors.teal700,
+    buttonTextColor: Color = Color.White,
+    radios: Int = 8,
+    shape: Shape = RoundedCornerShape(radios.dp),
     loading: Boolean,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    progressColor: Color = Color.White,
+    defaultElevation: Int = 0
 ) {
+
     Button(
-        onClick = onClick,
-        enabled = !loading,
-        modifier = modifier
+        modifier = Modifier
+            .padding(8.dp)
+            .then(modifier),
+        onClick = { onClick() },
+        shape = shape,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = buttonColor,
+            contentColor = buttonTextColor
+        ),
+        elevation = ButtonDefaults.buttonElevation(
+            defaultElevation = defaultElevation.dp,
+            pressedElevation = defaultElevation.dp,
+            disabledElevation = defaultElevation.dp
+        )
     ) {
         if (loading) {
             CircularProgressIndicator(
-                color = Color.White,
+                color = progressColor,
                 strokeWidth = 2.dp,
                 modifier = Modifier.size(20.dp)
             )
         } else {
-            Text(text)
+            Text(color = buttonTextColor, text = buttonText)
         }
     }
 }
@@ -595,11 +618,29 @@ fun ProgressButton(
 @Preview
 @Composable
 fun ProgressButtonPreview() {
-    var loading = remember { mutableStateOf(false) }
+    val loading = remember { mutableStateOf(false) }
+    var buttonText by remember { mutableStateOf("Start") }
+    var buttonColor by remember { mutableStateOf(Color(0xFF6200EE)) } // Purple
+    var isProcessing by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+
     ProgressButton(
-        text = "Submit",
-        loading = loading.value,
-        onClick = { loading.value = true }
+        buttonText = buttonText,
+        loading = isProcessing,
+        buttonColor = buttonColor,
+        onClick = {
+            isProcessing = true
+            buttonText = "Processing..."
+            buttonColor = Color.Gray
+
+            // Do background work outside of the component
+            scope.launch {
+                delay(5000)
+                buttonText = "Done!"
+                buttonColor = Color(0xFF4CAF50) // Green
+                isProcessing = false
+            }
+        }
     )
 }
 
